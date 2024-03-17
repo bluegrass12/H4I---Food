@@ -1,0 +1,73 @@
+{
+    "@context": [
+        "https://ref.gs1.org/standards/epcis/2.0.0/epcis-context.jsonld"
+    ],
+    "type": "EPCISDocument",
+    "schemaVersion": "2.0",
+    "creationDate": "2023-10-25T17:02:27.452Z",
+    "epcisBody": {
+        "eventList": [
+            {
+                "type": "ObjectEvent",
+                "eventTime": "2023-10-24T00:00:00-04:00",
+                "recordTime": "2023-10-24T00:00:00-04:00",
+                "eventTimeZoneOffset": "-04:00",
+                "eventID": "urn:uuid:32e4e2a2-5794-4315-9962-9b05979ad01f",
+                "action": "ADD",
+                "bizStep": "creating_class_instance",
+                "disposition": "active",
+                "readPoint": {
+                    "id": "https://id.gs1.org/414/9521234560005"
+                },
+                "bizLocation": {
+                    "id": "https://id.gs1.org/414/9521234560005"
+                },
+                "bizTransactionList": [
+                    {
+                        "type": "prodorder",
+                        "bizTransaction": "urn:epcglobal:cbv:bt:9521234560005:5555"
+                    }
+                ],
+                "quantityList": [
+                    {
+                        "epcClass": "https://id.gs1.org/01/99521234561111/10/abc1234",
+                        "quantity": 1000,
+                        "uom": "LBR"
+                    }
+                ]
+            },
+            {
+                "type": "ObjectEvent",
+                "eventTime": "2023-10-25T00:00:00-04:00",
+                "recordTime": "2023-10-25T00:00:00-04:00",
+                "eventTimeZoneOffset": "-04:00",
+                "eventID": "urn:uuid:3e131a0f-e919-4615-b0dc-e7441c0cc3f3",
+                "action": "OBSERVE",
+                "bizStep": "transporting",
+                "disposition": "in_transit",
+                "readPoint": {
+                    "id": "https://id.gs1.org/414/9521234560005"
+                },
+                "quantityList": [
+                    {
+                        "epcClass": "https://id.gs1.org/01/99521234561111/10/abc1234",
+                        "quantity": 1000,
+                        "uom": "LBR"
+                    }
+                ],
+                "sourceList": [
+                    {
+                        "type": "owning_party",
+                        "source": "https://id.gs1.org/417/9521234572220"
+                    }
+                ],
+                "destinationList": [
+                    {
+                        "type": "location",
+                        "destination": "https://id.gs1.org/414/9521234560111"
+                    }
+                ]
+            }
+        ]
+    }
+}
