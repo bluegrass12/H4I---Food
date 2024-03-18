@@ -13,6 +13,7 @@ if __name__ == "__main__":
         print("JSON data loaded successfully.")
         print("Converted Python data structure:")
         print(json_data)
+        exit(json_data)  # Exits and passes the JSON data to the caller
     except FileNotFoundError:
         print("File not found. Please provide a valid file path.")
     except json.JSONDecodeError:
