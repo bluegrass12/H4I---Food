@@ -1,0 +1,41 @@
+{
+    "@context": [
+        "https://ref.gs1.org/standards/epcis/2.0.0/epcis-context.jsonld"
+    ],
+    "type": "EPCISDocument",
+    "schemaVersion": "2.0",
+    "creationDate": "2024-03-17T11:55:57.346581Z",
+    "epcisBody": {
+        "eventList": [
+            {
+                "eventList": "ObjectEvent",
+                "eventTime": "TO-DO",
+                "recordTime": "2024-03-17T11:55:57.346581Z",
+                "eventTimeZoneOffset": "TO-DO",
+                "eventID": "urn:epc:id:gid:88888888.XXXXXX",
+                "action": "ADD",
+                "biz-step": "creating_class_instance",
+                "disposition": "active",
+                "readPoint": {
+                    "id": "https://id.gs1.org/414/9521234560005"
+                },
+                "bizLocation": {
+                    "id": "https://id.gs1.org/414/9521234560005"
+                },
+                "bizTransactionList": [
+                    {
+                        "type": "prodorder",
+                        "bizTransaction": "urn:epcglobal:cbv:bt:88888888:XXXXXX"
+                    }
+                ],
+                "quantityList": [
+                    {
+                        "epcClass": "https://id.gs1.org/01/99521234561111/10/abc1234",
+                        "quantity": 3000,
+                        "uom": "POUNDS"
+                    }
+                ]
+            }
+        ]
+    }
+}
