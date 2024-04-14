@@ -163,8 +163,3 @@ if __name__ == "__main__":
     converter = Converter(sys.argv[1], firstRow)
     converter.read_excel()
     converter.output_json(output)
-
-
-
-# other error handling to add: 
-# - if firstRow is greater than the number of rows in the Excel file, raise ValueError
