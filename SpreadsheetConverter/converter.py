@@ -1,6 +1,8 @@
 import json
 import pandas as pd
-from EPCPyYes.core.v1_2.CBV import business_steps
+# from EPCPyYes.core.v1_2.CBV import business_steps
+import sys
+import os
 from datetime import datetime
 
 # Header ordering is fixed (for now)
@@ -29,12 +31,22 @@ class Converter:
     def read_excel(self):
         try:
             df = pd.read_excel(self.file_name)
-            print("DataFrame successfully created from the Excel file.")
-            print(type(df.head()))  
+
+            # check if start_row is less than the number of rows in the Excel file
+            if ((self.start_row - 2) > df.shape[0]):
+                raise Exception('Number of first data row must not exceed number of rows in Excel file.')
+            
+            print("Excel file successfully read.")
         except FileNotFoundError:
             print("File not found. Please make sure the file path is correct.")
+            print('Usage:', os.path.basename(__file__), '<Excel file name>',
+              '<number of first data row>', '<JSON file name>')
+            sys.exit(1)
         except Exception as e:
             print("An error occurred:", e)
+            print('Usage:', os.path.basename(__file__), '<Excel file name>',
+              '<number of first data row>', '<JSON file name>')
+            sys.exit(1)
         
         # Parse the data, starting from the start row
         try:
@@ -45,6 +57,9 @@ class Converter:
             self.CTEs.append(testCTE)
         except Exception as e:
             print("An error occurred while parsing the data:\n\t", e)
+            print('Usage:', os.path.basename(__file__), '<Excel file name>',
+              '<number of first data row>', '<JSON file name>')
+            sys.exit(1)
 
     def output_json(self, output_path):
         eventList = [] if len(self.CTEs) == 0 else [self.CTEs[0].convertToJSON()]
@@ -118,17 +133,33 @@ class HarvestCTE(CTE):
         }
 
 
-    
-
-    
-    
-
-
-
-# Example usage:
 if __name__ == "__main__":
-    # file_name = input("Enter the Excel file name: ")
-    # start_row = int(input("Enter the first row with data (not of the header): "))
-    converter = Converter("template.xlsx", 4)
+    if (len(sys.argv) < 4):
+        print('Incorrect Arguments.')
+        print('Must include Excel (xlsx) file.')
+        print('Must indicate number of the first data row (do not include header or description rows).')
+        print('Must include desired name of output JSON file')
+        print('Usage:', os.path.basename(__file__), '<Excel file name>',
+              '<number of first data row>', '<JSON file name>')
+        sys.exit(1)
+
+    try:
+        firstRow = int(sys.argv[2])
+
+        # n cannot be greater or less than the number of rows in CSV file
+        if (firstRow < 1):
+            raise ValueError
+
+    except ValueError:
+        print('Enter first data row as an integer. Must not exceed number of rows in Excel file or be less than 1')
+        print('Usage:', os.path.basename(__file__), '<Excel file name>',
+              '<number of first data row>', '<JSON file name>')
+        sys.exit(1)
+
+    output = sys.argv[3]
+    if (len(output) < 6 or output[-5:] != '.json'):
+        output += '.json'
+
+    converter = Converter(sys.argv[1], firstRow)
     converter.read_excel()
-    converter.output_json("test_output.json")
+    converter.output_json(output)
