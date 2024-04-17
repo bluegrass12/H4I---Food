@@ -4,13 +4,13 @@
     ],
     "type": "EPCISDocument",
     "schemaVersion": "2.0",
-    "creationDate": "2024-03-17T11:55:57.346581Z",
+    "creationDate": "2024-04-17T12:24:39.609329Z",
     "epcisBody": {
         "eventList": [
             {
                 "eventList": "ObjectEvent",
                 "eventTime": "TO-DO",
-                "recordTime": "2024-03-17T11:55:57.346581Z",
+                "recordTime": "2024-04-17T12:24:39.609329Z",
                 "eventTimeZoneOffset": "TO-DO",
                 "eventID": "urn:epc:id:gid:88888888.XXXXXX",
                 "action": "ADD",
@@ -31,8 +31,8 @@
                 "quantityList": [
                     {
                         "epcClass": "https://id.gs1.org/01/99521234561111/10/abc1234",
-                        "quantity": 3000,
-                        "uom": "POUNDS"
+                        "quantity": "Quantity Harvested",
+                        "uom": "Unit of Measure "
                     }
                 ]
             }

@@ -1,0 +1,35 @@
+{
+    "current_format": "FakeTest_2",
+    "settings": {
+        "templateformat": {
+            "start_row": 3,
+            "event_type": "Harvest",
+            "format": {
+                "Subsequent Recipient Name": 0,
+                "Subsequent Recipient Address": 1,
+                "Harvest Location Company Name": 2,
+                "Harvest Location Address": 3,
+                "Quantity Harvested": 4,
+                "Unit of Measure": 5,
+                "Harvester Business Name": 6,
+                "RAC Commodity and Variety": 9,
+                "Harvest Date": 11
+            }
+        },
+        "FakeTest_2": {
+            "start_row": 2,
+            "event_type": "Harvest",
+            "format": {
+                "Subsequent Recipient Name": 0,
+                "Subsequent Recipient Address": 1,
+                "Harvest Location Company Name": 2,
+                "Harvest Location Address": 3,
+                "Quantity Harvested": 4,
+                "Unit of Measure": 5,
+                "Harvester Business Name": 6,
+                "RAC Commodity and Variety": 7,
+                "Harvest Date": 8
+            }
+        }
+    }
+}
