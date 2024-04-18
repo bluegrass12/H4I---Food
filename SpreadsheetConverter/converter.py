@@ -28,6 +28,7 @@ class Converter:
         self.fake_URN = "urn:epc:id:gid:88888888.XXXXXX"
         # This will be set by get_settings() or prompt_for_format()
         self.start_row = 0
+        self.start_column = 1
         self.CTEs = []
         self.cur_format = None 
         # Get the settings
@@ -38,10 +39,10 @@ class Converter:
             self.save_settings()
 
     def read_excel(self):
+        # Read the raw data into a dataframe
         try:
             df = pd.read_excel(self.file_name)
-            print("DataFrame successfully created from the Excel file.")
-            print(type(df.head()))  
+
         except FileNotFoundError:
             print("File not found. Please make sure the file path is correct.")
         except Exception as e:
@@ -49,8 +50,11 @@ class Converter:
         
         # Parse the data, starting from the start row
         try:
+            # sliced df is the df with the non data starting rows removed
+            # the -2 is because start_row is 1-indexed and the 1st row is the header, meaning row 2 is actually index 0
             sliced_df = df.iloc[self.start_row-2:]
-            firstEntry = sliced_df.iloc[[0]].values.tolist()[0][1:]
+            # Grabs the first entry in the sliced df and converts it to a list, -1 froms start_column is because of 0 indexing
+            firstEntry = sliced_df.iloc[[0]].values.tolist()[0][self.start_column-1:]
             testCTE = HarvestCTE(firstEntry)
             testCTE.addAllKDEs(firstEntry, self.CTE_settings[self.cur_format].format)
             self.CTEs.append(testCTE)
@@ -81,6 +85,9 @@ class Converter:
             raw_settings = json.load(json_file)
             settings = {format_name : CTEFormat.fromDict(format) for format_name, format in raw_settings["settings"].items()}
             self.cur_format = raw_settings["current_format"]
+            self.start_row = settings[self.cur_format].start_row
+            self.start_column = settings[self.cur_format].start_column
+
             return settings
    
     def prompt_for_format(self):
@@ -93,12 +100,14 @@ class Converter:
         event_type = CTETypes[int(input())-1]
         # Get start row
         print("Please enter the row number where the data starts:")
-        start_row = int(input())-1
+        start_row = int(input())
+        print("Please enter the column number where the data starts:")
+        start_column = int(input())
         # Get the format:
         KDE_format = {}
         for kde in CTEFormat.required_KDEs[event_type]:
             print(f"\nPlease enter the column number for {kde.value}:")
-            KDE_format[kde] = int(input())-1
+            KDE_format[kde] = int(input())-start_column # Start column works because it is 1-indexed, so effectively we are subtracting (start_column + 1)
         # Name the format
         print("\n\nPlease enter the name of this format")
         format_name = input()
@@ -116,6 +125,8 @@ class Converter:
             print("Format not found")
             return
         self.cur_format = format_name
+        self.start_row = self.CTE_settings[format_name].start_row
+        self.start_column = self.CTE_settings[format_name].start_column
         self.save_settings()
 
 class CTE:
@@ -146,6 +157,7 @@ class HarvestCTE(CTE):
     """This class represents a Harvest CTE
     It is a subclass of the CTE class and is intended to be used to store and convert Harvest CTEs
     """
+    # The KDEs that must be included for a valid Harvest CTE
     requiredKDEs = [KDE.SUBSEQUENT_RECIPIENT_NAME, KDE.SUBSEQUENT_RECIPIENT_ADDRESS, KDE.HARVEST_LOCATION_COMPANY_NAME, KDE.HARVEST_LOCATION_ADDRESS, KDE.QUANTITY_HARVESTED, KDE.UNIT_OF_MEASURE, KDE.HARVESTER_BUSINESS_NAME, KDE.RAC_COMMODITY_AND_VARIETY, KDE.HARVEST_DATE]
 
     def __init__(self, raw_data):
@@ -154,12 +166,14 @@ class HarvestCTE(CTE):
     def addAllKDEs(self, values, format):
         for event, index in format.items():
             self.KDEs[event] = values[index]
-
+        
 
     def convertToJSON(self):
+        print(self.KDEs[KDE.HARVEST_DATE])
+        print(type(self.KDEs[KDE.HARVEST_DATE]))
         return {
             "eventList": "ObjectEvent",
-            "eventTime": "TO-DO",
+            "eventTime": self.KDEs[KDE.HARVEST_DATE].strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
             "recordTime": datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
             "eventTimeZoneOffset": "TO-DO",
             "eventID": "urn:epc:id:gid:88888888.XXXXXX",
@@ -167,7 +181,10 @@ class HarvestCTE(CTE):
             "biz-step": "creating_class_instance",
             "disposition": "active",
             "readPoint": {
-                    "id": "https://id.gs1.org/414/9521234560005"
+                    "name": self.KDEs[KDE.HARVEST_LOCATION_COMPANY_NAME],
+                    "extension": {
+                        "address": self.KDEs[KDE.HARVEST_LOCATION_ADDRESS]
+                    }
                 },
             "bizLocation": {
                     "id": "https://id.gs1.org/414/9521234560005"
@@ -205,14 +222,16 @@ class CTEFormat:
         CTEType.HARVEST: [KDE.SUBSEQUENT_RECIPIENT_NAME, KDE.SUBSEQUENT_RECIPIENT_ADDRESS, KDE.HARVEST_LOCATION_COMPANY_NAME, KDE.HARVEST_LOCATION_ADDRESS, KDE.QUANTITY_HARVESTED, KDE.UNIT_OF_MEASURE, KDE.HARVESTER_BUSINESS_NAME, KDE.RAC_COMMODITY_AND_VARIETY, KDE.HARVEST_DATE,],
     }
 
-    def __init__(self, start_row, event_type, format):
+    def __init__(self, start_row, event_type, format, start_column=1):
         self.format = format
         self.event_type = event_type
         self.start_row = start_row
+        self.start_column = start_column
 
     def toDict(self):
         return {
             "start_row": self.start_row,
+            "start_column": self.start_column,
             "event_type": self.event_type.value,
             "format": {event.value: index for event, index in self.format.items()}
         }
@@ -221,7 +240,7 @@ class CTEFormat:
     def fromDict(format_dict):
         event_type = CTEType(format_dict["event_type"])
         format = {KDE(key): value for key, value in format_dict["format"].items()}
-        return CTEFormat(format_dict["start_row"], event_type, format)
+        return CTEFormat(format_dict["start_row"], event_type, format, format_dict["start_column"])
 
 
 

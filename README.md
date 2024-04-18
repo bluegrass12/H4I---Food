@@ -7,6 +7,7 @@ The goal of this project is to create a simple application to help producers inp
 ## Standards
 
 THe main standard this project deals with EPCIS 2.0, specifically when implemented into JSON files. The software involves a command line interface that converts excel files into EPCIS 2.0 compliant JSON files, and vice versa.
+https://developers.evrythng.com/reference/epcis-20#objectevent
 
 ## Current State
 
