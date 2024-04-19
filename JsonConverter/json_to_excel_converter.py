@@ -1,56 +1,59 @@
 import json
 import pandas as pd
+import hashlib
 
 def read_json_file(file_path):
     with open(file_path, 'r') as file:
         data = json.load(file)
     return data
 
-def flatten_events(events):
-    flattened_events = []
+def extract_events(json_data):
+    events = json_data.get('epcisBody', {}).get('eventList', [])
+    extracted_events = []
     for event in events:
-        flattened_event = {}
-        flattened_event['type'] = event['type']
-        flattened_event['eventTime'] = event['eventTime']
-        flattened_event['eventTimeZoneOffset'] = event['eventTimeZoneOffset']
-        flattened_event['eventID'] = event['eventID']
-        flattened_event['bizStep'] = event.get('bizStep', '')
-        flattened_event['readPoint'] = event.get('readPoint', {}).get('id', '')
-        flattened_event.update(flatten_quantities(event.get('inputQuantityList', []), 'input'))
-        flattened_event.update(flatten_quantities(event.get('outputQuantityList', []), 'output'))
-        flattened_events.append(flattened_event)
-    return flattened_events
+        # Extracting the event ID based on its format
+        event_id = event.get('eventID', '')
+        if event_id.startswith("urn:uuid:"):
+            # For UUID event IDs, grab everything after last ':'
+            event_id_value = event_id.split(":")[-1].replace("-", "")
+        elif event_id.startswith("ni:///sha-256;"):
+            # For hashed event IDs, extract the hash value
+            hash_value = event_id.split(";")[-1].split("?")[0]
+            event_id_value = hashlib.sha256(hash_value.encode()).hexdigest()
+        else:
+            # For other types of event IDs, pass through as is
+            event_id_value = event_id
 
-def flatten_quantities(quantities, prefix):
-    flattened_quantities = {}
-    for i, quantity in enumerate(quantities):
-        key_prefix = f'{prefix}{i+1}_'
-        flattened_quantities[key_prefix + 'epcClass'] = quantity.get('epcClass', '')
-        flattened_quantities[key_prefix + 'quantity'] = quantity.get('quantity', '')
-        flattened_quantities[key_prefix + 'uom'] = quantity.get('uom', '')
-    return flattened_quantities
+        #Format Error Reason
+        error_reason = event.get('errorDeclaration', {}).get('reason', 'N/A')
+        if error_reason != 'N/A':
+            error_reason = ' '.join([word.capitalize() for word in error_reason.split('_')])
 
-def convert_to_excel(json_file_path, excel_file_path):
-    # Read JSON data from file
-    json_data = read_json_file(json_file_path)
+        extracted_event = {
+            'Type': event.get('type', ''),
+            'Event Time': event.get('eventTime', ''),
+            'Event TimeZone Offset': event.get('eventTimeZoneOffset', ''),
+            'Event ID': event_id_value,
+            'Biz Step': event.get('bizStep', '').capitalize(),
+            'Read Point': event.get('readPoint', {}).get('id', '').split(":")[-1],
+            'Error Reason': error_reason
+        }
+        extracted_events.append(extracted_event)
+    return extracted_events
 
-    # Flatten event data
-    event_list = json_data.get('epcisBody', {}).get('eventList', [])
-    flattened_events = flatten_events(event_list)
-
-    # Convert flattened data to DataFrame
-    df = pd.DataFrame(flattened_events)
-
-    # Convert DataFrame to Excel file
+def save_to_excel(extracted_events, excel_file_path):
+    df = pd.DataFrame(extracted_events)
     df.to_excel(excel_file_path, index=False)
-    print("Excel file created successfully.")
+    print("Excel file saved successfully.")
 
 if __name__ == "__main__":
     json_file_path = input("Enter the path to the JSON file: ")
     excel_file_path = input("Enter the path to save the Excel file: ")
 
     try:
-        convert_to_excel(json_file_path, excel_file_path)
+        json_data = read_json_file(json_file_path)
+        extracted_events = extract_events(json_data)
+        save_to_excel(extracted_events, excel_file_path)
     except FileNotFoundError:
         print("File not found. Please provide a valid file path.")
     except json.JSONDecodeError:
