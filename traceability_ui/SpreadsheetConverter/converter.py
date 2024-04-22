@@ -23,9 +23,10 @@ from converterEnums import CTEType, KDE
 
 
 class Converter:
-    def __init__(self, file_name):
+    def __init__(self, file_name, settings_path="settings.json"):
         self.file_name = file_name
         self.fake_URN = "urn:epc:id:gid:88888888.XXXXXX"
+        self.settings_path = settings_path
         # This will be set by get_settings() or prompt_for_format()
         self.start_row = 0
         self.start_column = 1
@@ -77,11 +78,11 @@ class Converter:
 
     def get_settings(self):
         # Return nothing if file doesn't exist
-        if (not os.path.exists("settings.json")):
+        if (not os.path.exists(self.settings_path)):
            print("No Default Settings Found")
            return {}
         # Otherwise, read the settings from the file
-        with open("settings.json", "r") as json_file:
+        with open(self.settings_path, "r") as json_file:
             raw_settings = json.load(json_file)
             settings = {format_name : CTEFormat.fromDict(format) for format_name, format in raw_settings["settings"].items()}
             self.cur_format = raw_settings["current_format"]
@@ -117,7 +118,7 @@ class Converter:
 
     def save_settings(self):
         serializable_settings = {key: format.toDict() for key, format in self.CTE_settings.items()}
-        with open("settings.json", "w") as json_file:
+        with open(self.settings_path, "w") as json_file:
             json.dump({"current_format": self.cur_format,"settings": serializable_settings}, json_file, indent=4)
 
     def change_to_format(self, format_name):
@@ -169,8 +170,6 @@ class HarvestCTE(CTE):
         
 
     def convertToJSON(self):
-        print(self.KDEs[KDE.HARVEST_DATE])
-        print(type(self.KDEs[KDE.HARVEST_DATE]))
         return {
             "eventList": "ObjectEvent",
             "eventTime": self.KDEs[KDE.HARVEST_DATE].strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
