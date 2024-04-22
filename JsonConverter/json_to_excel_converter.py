@@ -1,6 +1,8 @@
 import json
 import pandas as pd
 import hashlib
+import sys
+import os
 
 def read_json_file(file_path):
     with open(file_path, 'r') as file:
@@ -24,7 +26,7 @@ def extract_events(json_data):
             # For other types of event IDs, pass through as is
             event_id_value = event_id
 
-        #Format Error Reason
+        # Format Error Reason
         error_reason = event.get('errorDeclaration', {}).get('reason', 'N/A')
         if error_reason != 'N/A':
             error_reason = ' '.join([word.capitalize() for word in error_reason.split('_')])
@@ -47,15 +49,21 @@ def save_to_excel(extracted_events, excel_file_path):
     print("Excel file saved successfully.")
 
 if __name__ == "__main__":
-    json_file_path = input("Enter the path to the JSON file: ")
-    excel_file_path = input("Enter the path to save the Excel file: ")
+    if len(sys.argv) != 2:
+        print("Usage: python json_to_excel_converter.py <json_file_path>")
+        sys.exit(1)
+
+    json_file_path = sys.argv[1]
+
+    if not os.path.exists(json_file_path):
+        print("Error: JSON file does not exist.")
+        sys.exit(1)
 
     try:
+        excel_file_path = os.path.splitext(json_file_path)[0] + ".xlsx"
         json_data = read_json_file(json_file_path)
         extracted_events = extract_events(json_data)
         save_to_excel(extracted_events, excel_file_path)
-    except FileNotFoundError:
-        print("File not found. Please provide a valid file path.")
     except json.JSONDecodeError:
         print("Invalid JSON format. Please check the content of the file.")
     except Exception as e:
