@@ -174,7 +174,7 @@ class HarvestCTE(CTE):
             "eventList": "ObjectEvent",
             "eventTime": self.KDEs[KDE.HARVEST_DATE].strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
             "recordTime": datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
-            "eventTimeZoneOffset": "TO-DO",
+            "eventTimeZoneOffset": datetime.now().astimezone().strftime('%z'),
             "eventID": "urn:epc:id:gid:88888888.XXXXXX",
             "action": "ADD",
             "biz-step": "creating_class_instance",

@@ -131,10 +131,19 @@ class _HomeBodyState extends State<HomeBody> {
   /// Converts the _selectedFileResult using the python converter
   void _convertFile(BuildContext context) async {
     // Argument format: file to run, input file, output file, settings path, optional -f to specify format
-
-
-    await Process.run('python', ['./SpreadsheetConverter/UI_converter_handler.py', _selectedFileResult!.files.single.path!, './SpreadsheetConverter/testUIOutput.json', _settingsPath]);
-      // Listen to the error output from stderr
+    if (_selectedFileResult!.files.single.extension == 'json') {
+      var process = await Process.run('python', ['./JsonConverter/JSON_to_excel_converter.py', _selectedFileResult!.files.single.path!]);
+      print(process.stdout);
+      print(process.stderr);
+      print("JSON"); 
+    }
+    else if (_selectedFileResult!.files.single.extension == 'xlsx') {
+      await Process.run('python', ['./SpreadsheetConverter/UI_converter_handler.py', _selectedFileResult!.files.single.path!, './SpreadsheetConverter/testSpreadsheetOutput.json', _settingsPath]);
+    }
+    else {
+      print("Invalid file type");
+    }
+      // // Listen to the error output from stderr
       // print(process.stdout);
       // print(process.stderr);
       setState(() {

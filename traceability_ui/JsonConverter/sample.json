@@ -1,0 +1,26 @@
+[
+  {
+    "name": "John Doe",
+    "age": 30,
+    "city": "New York",
+    "is_student": false,
+    "grades": {
+      "math": 90,
+      "science": 85,
+      "english": 88
+    },
+    "friends": ["Alice", "Bob", "Charlie"]
+  },
+  {
+    "name": "Jane Smith",
+    "age": 25,
+    "city": "Los Angeles",
+    "is_student": true,
+    "grades": {
+      "math": 95,
+      "science": 92,
+      "english": 90
+    },
+    "friends": ["David", "Emma"]
+  }
+]
