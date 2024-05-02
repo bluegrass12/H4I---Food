@@ -4,13 +4,13 @@
     ],
     "type": "EPCISDocument",
     "schemaVersion": "2.0",
-    "creationDate": "2024-04-22T15:28:24.657846Z",
+    "creationDate": "2024-04-22T17:24:06.850686Z",
     "epcisBody": {
         "eventList": [
             {
                 "eventList": "ObjectEvent",
                 "eventTime": "2023-11-10T00:00:00.000000Z",
-                "recordTime": "2024-04-22T15:28:24.655484Z",
+                "recordTime": "2024-04-22T17:24:06.850686Z",
                 "eventTimeZoneOffset": "-0500",
                 "eventID": "urn:epc:id:gid:88888888.XXXXXX",
                 "action": "ADD",
