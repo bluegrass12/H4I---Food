@@ -10,7 +10,9 @@ A simple project which converts EPCIS 2.0 Formatted Excel files to formatted JSO
 
 In the current dev state, this application relies on Python for the backend and Flutter (a Dart framework) for the frontend.
 As such, you'll need both Python and Flutter installed on your local machine. 
+
 [Link to official flutter install guide](https://flutter.dev/docs/get-started/install)
+
 [Link to Python's site](https://www.python.org/downloads/)
 
 ### Running using the UI
@@ -57,7 +59,11 @@ concept and as a potential starting point rather than a full-fledged solution.
 
 ## What to Work on Next
 There are several obvious areas of improvement for this code.
+
 For one, an add format screen should be added to the UI, which would provide the same functionality as the console add format process.
+
 Secondly, more options in the UI to specify locations (eg. output locations or location of settings file) should be added.
+
 Thirdly, the outputs, both JSON and Excel, should be fine tuned to be fully EPCIS compliant. This would likely involve incorporating EPCIS master data into the process.
+
 Finally, the code should be expanded to convert more than a single Harvest event, it should be easily expanded to handle all CTE events as well as handle multiple at once. 
