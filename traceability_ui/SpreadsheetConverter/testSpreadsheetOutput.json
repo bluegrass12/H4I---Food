@@ -1,0 +1,44 @@
+{
+    "@context": [
+        "https://ref.gs1.org/standards/epcis/2.0.0/epcis-context.jsonld"
+    ],
+    "type": "EPCISDocument",
+    "schemaVersion": "2.0",
+    "creationDate": "2024-04-22T17:24:06.850686Z",
+    "epcisBody": {
+        "eventList": [
+            {
+                "eventList": "ObjectEvent",
+                "eventTime": "2023-11-10T00:00:00.000000Z",
+                "recordTime": "2024-04-22T17:24:06.850686Z",
+                "eventTimeZoneOffset": "-0500",
+                "eventID": "urn:epc:id:gid:88888888.XXXXXX",
+                "action": "ADD",
+                "biz-step": "creating_class_instance",
+                "disposition": "active",
+                "readPoint": {
+                    "name": "Saras' Shrimp Farms",
+                    "extension": {
+                        "address": "56789 Broodstock Lane, Andrah Pradesh, India 515002, +91 555-7323663"
+                    }
+                },
+                "bizLocation": {
+                    "id": "https://id.gs1.org/414/9521234560005"
+                },
+                "bizTransactionList": [
+                    {
+                        "type": "prodorder",
+                        "bizTransaction": "urn:epcglobal:cbv:bt:88888888:XXXXXX"
+                    }
+                ],
+                "quantityList": [
+                    {
+                        "epcClass": "https://id.gs1.org/01/99521234561111/10/abc1234",
+                        "quantity": 3000,
+                        "uom": "POUNDS"
+                    }
+                ]
+            }
+        ]
+    }
+}

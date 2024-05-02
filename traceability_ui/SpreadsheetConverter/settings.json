@@ -1,0 +1,22 @@
+{
+    "current_format": "templateFormat",
+    "settings": {
+        "templateFormat": {
+            "start_row": 4,
+            "start_column": 2,
+            "event_type": "Harvest",
+            "format": {
+                "Subsequent Recipient Name": 0,
+                "Subsequent Recipient Address": 1,
+                "Harvest Location Company Name": 2,
+                "Harvest Location Address": 3,
+                "Quantity Harvested": 4,
+                "Unit of Measure": 5,
+                "Harvester Business Name": 8,
+                "RAC Commodity and Variety": 10,
+                "Harvest Date": 12
+            }
+            
+    }
+}
+}
